@@ -199,18 +199,18 @@ var onload = function() {
 				
 				var limitedWebPartManager = file.getLimitedWebPartManager(SP.WebParts.PersonalizationScope.shared);
 				
-				deleteKeyCommunciationsWebPart(clientContext, limitedWebPartManager)//.done(function() {
+				deleteKeyCommunciationsWebPart(clientContext, limitedWebPartManager).done(function() {
 					
 					var wp = limitedWebPartManager.importWebPart(wpXml);
 									
-					//limitedWebPartManager.addWebPart(wp.get_webPart(), "LeftColumn", 0);
+					limitedWebPartManager.addWebPart(wp.get_webPart(), "LeftColumn", 0);
 					
 					//file.checkIn();
 					
 					clientContext.executeQueryAsync(function() { 
 						console.log("Checked in file: " + file.get_title());
 					}, function() {console.log("fail check in")});
-				//});
+				});
 				
 			}, function() {console.log("fail")});
 		
@@ -221,12 +221,12 @@ var onload = function() {
 	
 	
 };
+// 
+// SP.SOD.registerSod("jquery", "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js");
+// SP.SOD.executeFunc("jquery", null, onload);
+// SP.SOD.executeOrDelayUntilScriptLoaded(onload, "sp.js");
 
-SP.SOD.registerSod("jquery", "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js");
-SP.SOD.executeFunc("jquery", null, onload);
-SP.SOD.executeOrDelayUntilScriptLoaded(onload, "sp.js");
-
-//SP.SOD.executeFunc('sp.js', 'SP.ClientContext', onload);
+SP.SOD.executeFunc('sp.js', 'SP.ClientContext', onload);
 
 
 
