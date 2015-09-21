@@ -76,7 +76,7 @@ var wpXml = '<?xml version=\"1.0\" encoding=\"utf-8\"?>'
 + '         <property name="ShouldHideControlWhenEmpty" type="bool">True</property> '
 + '         <property name="ShowViewDuplicates" type="bool">False</property> '
 + '         <property name="AvailableSortsJson" type="string">null</property> '
-+ '         <property name="DataProviderJSON" type="string">{"QueryGroupName":"9319aa92-ac21-43e9-bd90-3603685cbff5","QueryPropertiesTemplateUrl":"sitesearch://webroot","IgnoreQueryPropertiesTemplateUrl":false,"SourceID":"8413cd39-2156-4e00-b54d-11efd9abdb89","SourceName":"Local SharePoint Results","SourceLevel":"Ssa","CollapseSpecification":"","QueryTemplate":"path:{Site.Url} ContentTypeId:\\"0x0100DA897DFE18ABF642A9D56CA3F0075F82*\\" FeaturedOWSBOOL=1","FallbackSort":[{"p":"LastModifiedTime","d":1}],"FallbackSortJson":"[{\\"p\\":\\"LastModifiedTime\\",\\"d\\":1}]","RankRules":null,"RankRulesJson":"null","AsynchronousResultRetrieval":false,"SendContentBeforeQuery":true,"BatchClientQuery":true,"FallbackLanguage":-1,"FallbackRankingModelID":"","EnableStemming":true,"EnablePhonetic":false,"EnableNicknames":false,"EnableInterleaving":false,"EnableQueryRules":true,"EnableOrderingHitHighlightedProperty":false,"HitHighlightedMultivaluePropertyLimit":-1,"IgnoreContextualScope":true,"ScopeResultsToCurrentSite":false,"TrimDuplicates":false,"Properties":{"TryCache":true,"Scope":"{Site.URL}","UpdateLinksForCatalogItems":true,"EnableStacking":true,"ListId":"c1f83780-1a57-49a1-b86b-94860d9e25fc","ListItemId":1},"PropertiesJson":"{\\"TryCache\\":true,\\"Scope\\":\\"{Site.URL}\\",\\"UpdateLinksForCatalogItems\\":true,\\"EnableStacking\\":true,\\"ListId\\":\\"c1f83780-1a57-49a1-b86b-94860d9e25fc\\",\\"ListItemId\\":1}","ClientType":"ContentSearchRegular","UpdateAjaxNavigate":true,"SummaryLength":180,"DesiredSnippetLength":90,"PersonalizedQuery":false,"FallbackRefinementFilters":null,"IgnoreStaleServerQuery":false,"RenderTemplateId":"DefaultDataProvider","AlternateErrorMessage":null,"Title":""}</property> '
++ '         <property name="DataProviderJSON" type="string">{"QueryGroupName":"9319aa92-ac21-43e9-bd90-3603685cbff5","QueryPropertiesTemplateUrl":"sitesearch://webroot","IgnoreQueryPropertiesTemplateUrl":false,"SourceID":"8413cd39-2156-4e00-b54d-11efd9abdb89","SourceName":"Local SharePoint Results","SourceLevel":"Ssa","CollapseSpecification":"","QueryTemplate":"path:{Site.Url} ContentTypeId:\\"0x0100DA897DFE18ABF642A9D56CA3F0075F82*\\" FeaturedOWSBOOL=1\nDate00\u003e{Today} OR (ExpiryDateOWSDATE\\u003c\\u003e\\\u00270\\u0027 AND ExpiryDateOWSDATE\\u003c\\u003e\\\u00271\\u0027 AND ExpiryDateOWSDATE\\u003c\\u003e\\\u00272\\u0027 AND ExpiryDateOWSDATE\\u003c\\u003e\\\u00273\\u0027 AND ExpiryDateOWSDATE\\u003c\\u003e\\\u00274\\u0027 AND ExpiryDateOWSDATE\\u003c\\u003e\\\u00275\\u0027 AND ExpiryDateOWSDATE\\u003c\\u003e\\\u00276\\u0027 AND ExpiryDateOWSDATE\\u003c\\u003e\\\u00277\\u0027 AND ExpiryDateOWSDATE\\u003c\\u003e\\\u00278\\u0027 AND ExpiryDateOWSDATE\\u003c\\u003e\\\u00279\\u0027 AND )","FallbackSort":[{"p":"LastModifiedTime","d":1}],"FallbackSortJson":"[{\\"p\\":\\"LastModifiedTime\\",\\"d\\":1}]","RankRules":null,"RankRulesJson":"null","AsynchronousResultRetrieval":false,"SendContentBeforeQuery":true,"BatchClientQuery":true,"FallbackLanguage":-1,"FallbackRankingModelID":"","EnableStemming":true,"EnablePhonetic":false,"EnableNicknames":false,"EnableInterleaving":false,"EnableQueryRules":true,"EnableOrderingHitHighlightedProperty":false,"HitHighlightedMultivaluePropertyLimit":-1,"IgnoreContextualScope":true,"ScopeResultsToCurrentSite":false,"TrimDuplicates":false,"Properties":{"TryCache":true,"Scope":"{Site.URL}","UpdateLinksForCatalogItems":true,"EnableStacking":true,"ListId":"66f763c1-d1aa-4a73-8d92-040c379c8c32","ListItemId":1},"PropertiesJson":"{\\"TryCache\\":true,\\"Scope\\":\\"{Site.URL}\\",\\"UpdateLinksForCatalogItems\\":true,\\"EnableStacking\\":true,\\"ListId\\":\\"66f763c1-d1aa-4a73-8d92-040c379c8c32\\",\\"ListItemId\\":1}","ClientType":"ContentSearchRegular","UpdateAjaxNavigate":true,"SummaryLength":180,"DesiredSnippetLength":90,"PersonalizedQuery":false,"FallbackRefinementFilters":null,"IgnoreStaleServerQuery":false,"RenderTemplateId":"DefaultDataProvider","AlternateErrorMessage":null,"Title":""}</property> '
 + '         <property name="Direction" type="direction">NotSet</property> '
 + '       </properties> '
 + '     </data> '
@@ -90,7 +90,7 @@ var deleteKeyCommunciationsWebPart = function(ctx, limitedWebPartManager) {
 	var deferred = jQuery.Deferred();
 	
 	jQuery.ajax({
-		url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/GetFileByServerRelativeUrl('/teams/sheec_portal1/environmental-stewardship/pages/default.aspx')/GetLimitedWebPartManager(0)/WebParts?$expand=WebPart",
+		url: _spPageContextInfo.webAbsoluteUrl + "/_api/web/GetFileByServerRelativeUrl('" + ctx.get_url() + "/pages/default.aspx" + "')/GetLimitedWebPartManager(0)/WebParts?$expand=WebPart",
 		type: "get",
 		headers: {
             "accept": "application/json;odata=verbose",
@@ -134,54 +134,15 @@ var deleteKeyCommunciationsWebPart = function(ctx, limitedWebPartManager) {
 		}
 	});
 	
-	return deferred.promise();
-	
-// 	var deferred = jQuery.Deferred();
-// 	
-// 	var webPartsClient = limitedWebPartManager.get_webParts();
-// 	//var webParts
-// 	ctx.load(webPartsClient);
-// 	ctx.executeQueryAsync(function() {
-// 		
-// 		var kcIndex;
-// 		var i = webPartsClient.get_count();
-// 		for(var j=0; j<i;j++) {
-// 			var webPart = webPartsClient.get_item(j).get_webPart();
-// 			ctx.load(webPart)
-// 			ctx.executeQueryAsync(function(j) {
-// 				console.log("Title: " + webPart.get_title());
-// 				if(webPart.get_title() == "Key Communications") {
-// 					kcIndex = j;
-// 				}	
-// 			});
-// 		}
-// 		
-// 		if(!kcIndex){
-// 			console.log("Did not find Key Communication web part");
-// 			deferred.resolve();
-// 		}
-// 		
-// 		webPartsClient.get_item(j).deleteWebPart();
-// 		
-// 		ctx.executeQueryAsync(function() {
-// 			console.log("deleted Key Communication web part");
-// 			deferred.resolve();
-// 		});
-// 
-// 		
-// 	});
-// 	
-// 	return deferred.promise();
-	
+	return deferred.promise();	
 }
 
-var onload = function() { 
+var replaceKeyCommunicationsWebPart = function(clientContext){
 	console.log("Loading Data..");
-	
-	var clientContext = SP.ClientContext.get_current();
+
 	var website = clientContext.get_web();
 	
-	var serverRelativeUrl = _spPageContextInfo.webServerRelativeUrl + "/pages/default.aspx";
+	var serverRelativeUrl = clientContext.get_url() + "/pages/default.aspx";
 	
 	console.log("serverrelativeurl: " + serverRelativeUrl);
 	
@@ -192,7 +153,7 @@ var onload = function() {
 	clientContext.executeQueryAsync(function() { 
 		console.log("Loaded File: " + file.get_title());
 		
-		//file.checkOut();
+		file.checkOut();
 		
 			clientContext.executeQueryAsync(function() { 
 				console.log("Loaded File: " + file.get_title());
@@ -201,14 +162,15 @@ var onload = function() {
 				
 				deleteKeyCommunciationsWebPart(clientContext, limitedWebPartManager).done(function() {
 					
-					var wp = limitedWebPartManager.importWebPart(wpXml);
-									
+					console.log("Adding WP to page");
+					var wp = limitedWebPartManager.importWebPart(wpXml);				
 					limitedWebPartManager.addWebPart(wp.get_webPart(), "LeftColumn", 0);
 					
-					//file.checkIn();
+					file.checkIn();
+					file.publish("Published via script");
 					
 					clientContext.executeQueryAsync(function() { 
-						console.log("Checked in file: " + file.get_title());
+						console.log("Checked in & published file: " + file.get_title());
 					}, function() {console.log("fail check in")});
 				});
 				
@@ -216,17 +178,45 @@ var onload = function() {
 		
 		
 		
-	}, function() {console.log("fail")});
+	}, function(sender, args) {console.log("fail: "); console.log(sender); console.log(args);});
+}
+
+var onload = function() { 
+	var competencyUrls = [
+		//"https://chemours.sharepoint.com/teams/SHEEC_PORTAL1/auditing/",
+		"/teams/SHEEC_PORTAL1/data-systems-reporting",
+		 //"/teams/SHEEC_PORTAL1/distribution",
+		// "https://chemours.sharepoint.com/teams/SHEEC_PORTAL1/emergency-responses",
+		// "https://chemours.sharepoint.com/teams/SHEEC_PORTAL1/environmental-stewardship",
+		// "https://chemours.sharepoint.com/teams/SHEEC_PORTAL1/ergonomics",
+		// "https://chemours.sharepoint.com/teams/SHEEC_PORTAL1/fire-safety",
+		// "https://chemours.sharepoint.com/teams/SHEEC_PORTAL1/occupational-health",
+		// "https://chemours.sharepoint.com/teams/SHEEC_PORTAL1/occupational-medicine",
+		// "https://chemours.sharepoint.com/teams/SHEEC_PORTAL1/psm",
+		// "https://chemours.sharepoint.com/teams/SHEEC_PORTAL1/workplace-safety"
+		]
+		
+	for(var i = 0; i < competencyUrls.length; i++) {
+		var clientContext = new SP.ClientContext(competencyUrls[i]);
 	
+		replaceKeyCommunicationsWebPart(clientContext);
+	}
+		
 	
 	
 };
+
+
+
+
 // 
 // SP.SOD.registerSod("jquery", "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js");
 // SP.SOD.executeFunc("jquery", null, onload);
 // SP.SOD.executeOrDelayUntilScriptLoaded(onload, "sp.js");
 
 SP.SOD.executeFunc('sp.js', 'SP.ClientContext', onload);
+
+//SP.SOD.executeFunc('sp.js', 'SP.ClientContext', function() {console.log("hello")});
 
 
 
