@@ -105,7 +105,7 @@ var deleteKeyCommunciationsWebPart = function(ctx, limitedWebPartManager) {
 			
 			var index = -1;
 			jQuery.each(data.d.results, function(i,v) {
-				if(v.WebPart.Title == "Key Communications"){
+				if(v.WebPart.Title == webPartTitle){
 					index = i;
 					return false;
 				}
@@ -119,13 +119,13 @@ var deleteKeyCommunciationsWebPart = function(ctx, limitedWebPartManager) {
 					webPartsClient.get_item(index).deleteWebPart();
 					
 					ctx.executeQueryAsync(function() {
-						console.log("deleted Key Communication web part");
+						console.log("deleted "+ webPartTitle + " web part");
 						deferred.resolve();
 					});
 				});
 			}
 			else {
-				console.log("Did not find key communications web part");
+				console.log("Did not find " + webPartTitle + " web part");
 				deferred.resolve();
 			}
 		},
@@ -183,17 +183,17 @@ var replaceKeyCommunicationsWebPart = function(clientContext){
 
 var onload = function() { 
 	var competencyUrls = [
-		//"https://chemours.sharepoint.com/teams/SHEEC_PORTAL1/auditing/",
+		"/teams/SHEEC_PORTAL1/auditing/",
 		"/teams/SHEEC_PORTAL1/data-systems-reporting",
-		 //"/teams/SHEEC_PORTAL1/distribution",
-		// "https://chemours.sharepoint.com/teams/SHEEC_PORTAL1/emergency-responses",
-		// "https://chemours.sharepoint.com/teams/SHEEC_PORTAL1/environmental-stewardship",
-		// "https://chemours.sharepoint.com/teams/SHEEC_PORTAL1/ergonomics",
-		// "https://chemours.sharepoint.com/teams/SHEEC_PORTAL1/fire-safety",
-		// "https://chemours.sharepoint.com/teams/SHEEC_PORTAL1/occupational-health",
-		// "https://chemours.sharepoint.com/teams/SHEEC_PORTAL1/occupational-medicine",
-		// "https://chemours.sharepoint.com/teams/SHEEC_PORTAL1/psm",
-		// "https://chemours.sharepoint.com/teams/SHEEC_PORTAL1/workplace-safety"
+		"/teams/SHEEC_PORTAL1/distribution",
+		"/teams/SHEEC_PORTAL1/emergency-responses",
+		"/teams/SHEEC_PORTAL1/environmental-stewardship",
+		"/teams/SHEEC_PORTAL1/ergonomics",
+		"/teams/SHEEC_PORTAL1/fire-safety",
+		"/teams/SHEEC_PORTAL1/occupational-health",
+		"/teams/SHEEC_PORTAL1/occupational-medicine",
+		"/teams/SHEEC_PORTAL1/psm",
+		"/teams/SHEEC_PORTAL1/workplace-safety"
 		]
 		
 	for(var i = 0; i < competencyUrls.length; i++) {
@@ -207,7 +207,7 @@ var onload = function() {
 };
 
 
-
+var webPartTitle = "Key Communications";
 
 // 
 // SP.SOD.registerSod("jquery", "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js");
