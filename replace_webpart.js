@@ -76,7 +76,7 @@ var wpXml = '<?xml version=\"1.0\" encoding=\"utf-8\"?>'
 + '         <property name="ShouldHideControlWhenEmpty" type="bool">True</property> '
 + '         <property name="ShowViewDuplicates" type="bool">False</property> '
 + '         <property name="AvailableSortsJson" type="string">null</property> '
-+ '         <property name="DataProviderJSON" type="string">{"QueryGroupName":"9319aa92-ac21-43e9-bd90-3603685cbff5","QueryPropertiesTemplateUrl":"sitesearch://webroot","IgnoreQueryPropertiesTemplateUrl":false,"SourceID":"8413cd39-2156-4e00-b54d-11efd9abdb89","SourceName":"Local SharePoint Results","SourceLevel":"Ssa","CollapseSpecification":"","QueryTemplate":"path:{Site.Url} ContentTypeId:\\"0x0100DA897DFE18ABF642A9D56CA3F0075F82*\\" FeaturedOWSBOOL=1\\nDate00\\u003e{Today} OR (ExpiryDateOWSDATE\\u003c\\u003e\\u00270\\u0027 AND ExpiryDateOWSDATE\\u003c\\u003e\\u00271\\u0027 AND ExpiryDateOWSDATE\\u003c\\u003e\\u00272\\u0027 AND ExpiryDateOWSDATE\\u003c\\u003e\\u00273\\u0027 AND ExpiryDateOWSDATE\\u003c\\u003e\\u00274\\u0027 AND ExpiryDateOWSDATE\\u003c\\u003e\\u00275\\u0027 AND ExpiryDateOWSDATE\\u003c\\u003e\\u00276\\u0027 AND ExpiryDateOWSDATE\\u003c\\u003e\\u00277\\u0027 AND ExpiryDateOWSDATE\\u003c\\u003e\\u00278\\u0027 AND ExpiryDateOWSDATE\\u003c\\u003e\\u00279\\u0027 AND )","FallbackSort":[{"p":"LastModifiedTime","d":1}],"FallbackSortJson":"[{\\"p\\":\\"LastModifiedTime\\",\\"d\\":1}]","RankRules":null,"RankRulesJson":"null","AsynchronousResultRetrieval":false,"SendContentBeforeQuery":true,"BatchClientQuery":true,"FallbackLanguage":-1,"FallbackRankingModelID":"","EnableStemming":true,"EnablePhonetic":false,"EnableNicknames":false,"EnableInterleaving":false,"EnableQueryRules":true,"EnableOrderingHitHighlightedProperty":false,"HitHighlightedMultivaluePropertyLimit":-1,"IgnoreContextualScope":true,"ScopeResultsToCurrentSite":false,"TrimDuplicates":false,"Properties":{"TryCache":true,"Scope":"{Site.URL}","UpdateLinksForCatalogItems":true,"EnableStacking":true,"ListId":"66f763c1-d1aa-4a73-8d92-040c379c8c32","ListItemId":1},"PropertiesJson":"{\\"TryCache\\":true,\\"Scope\\":\\"{Site.URL}\\",\\"UpdateLinksForCatalogItems\\":true,\\"EnableStacking\\":true,\\"ListId\\":\\"66f763c1-d1aa-4a73-8d92-040c379c8c32\\",\\"ListItemId\\":1}","ClientType":"ContentSearchRegular","UpdateAjaxNavigate":true,"SummaryLength":180,"DesiredSnippetLength":90,"PersonalizedQuery":false,"FallbackRefinementFilters":null,"IgnoreStaleServerQuery":false,"RenderTemplateId":"DefaultDataProvider","AlternateErrorMessage":null,"Title":""}</property> '
++ '         <property name="DataProviderJSON" type="string">{"QueryGroupName":"9319aa92-ac21-43e9-bd90-3603685cbff5","QueryPropertiesTemplateUrl":"sitesearch://webroot","IgnoreQueryPropertiesTemplateUrl":false,"SourceID":"8413cd39-2156-4e00-b54d-11efd9abdb89","SourceName":"Local SharePoint Results","SourceLevel":"Ssa","CollapseSpecification":"","QueryTemplate":"path:{Site.Url} ContentTypeId:\\"0x0100DA897DFE18ABF642A9D56CA3F0075F82*\\" FeaturedOWSBOOL=1\\n(Date00\\u003e{Today} OR (-ExpiryDateOWSDATE:\\u00270*\\u0027 AND -ExpiryDateOWSDATE:\\u00271*\\u0027 AND -ExpiryDateOWSDATE:\\u00272*\\u0027 AND -ExpiryDateOWSDATE:\\u00273*\\u0027 AND -ExpiryDateOWSDATE:\\u00274*\\u0027 AND -ExpiryDateOWSDATE:\\u00275*\\u0027 AND -ExpiryDateOWSDATE:\\u00276*\\u0027 AND -ExpiryDateOWSDATE:\\u00277*\\u0027 AND -ExpiryDateOWSDATE:\\u00278*\\u0027 AND -ExpiryDateOWSDATE:\\u00279*\\u0027 ))","FallbackSort":[{"p":"LastModifiedTime","d":1}],"FallbackSortJson":"[{\\"p\\":\\"LastModifiedTime\\",\\"d\\":1}]","RankRules":null,"RankRulesJson":"null","AsynchronousResultRetrieval":false,"SendContentBeforeQuery":true,"BatchClientQuery":true,"FallbackLanguage":-1,"FallbackRankingModelID":"","EnableStemming":true,"EnablePhonetic":false,"EnableNicknames":false,"EnableInterleaving":false,"EnableQueryRules":true,"EnableOrderingHitHighlightedProperty":false,"HitHighlightedMultivaluePropertyLimit":-1,"IgnoreContextualScope":true,"ScopeResultsToCurrentSite":false,"TrimDuplicates":false,"Properties":{"TryCache":true,"Scope":"{Site.URL}","UpdateLinksForCatalogItems":true,"EnableStacking":true,"ListId":"2afbf720-186e-470d-9654-35d64511df81","ListItemId":1},"PropertiesJson":"{\\"TryCache\\":true,\\"Scope\\":\\"{Site.URL}\\",\\"UpdateLinksForCatalogItems\\":true,\\"EnableStacking\\":true,\\"ListId\\":\\"2afbf720-186e-470d-9654-35d64511df81\\",\\"ListItemId\\":1}","ClientType":"ContentSearchRegular","UpdateAjaxNavigate":true,"SummaryLength":180,"DesiredSnippetLength":90,"PersonalizedQuery":false,"FallbackRefinementFilters":null,"IgnoreStaleServerQuery":false,"RenderTemplateId":"DefaultDataProvider","AlternateErrorMessage":null,"Title":""}</property> '
 + '         <property name="Direction" type="direction">NotSet</property> '
 + '       </properties> '
 + '     </data> '
@@ -183,20 +183,23 @@ var replaceKeyCommunicationsWebPart = function(clientContext){
 
 var onload = function() { 
 	var competencyUrls = [
-		// "/teams/SHEEC_PORTAL1/auditing/",
-		//  "/teams/SHEEC_PORTAL1/data-systems-reporting",
-		// "/teams/SHEEC_PORTAL1/distribution",
-		// "/teams/SHEEC_PORTAL1/emergency-responses",
-		// "/teams/SHEEC_PORTAL1/environmental-stewardship",
-		// "/teams/SHEEC_PORTAL1/ergonomics",
-		// "/teams/SHEEC_PORTAL1/fire-safety",
-		// "/teams/SHEEC_PORTAL1/occupational-health",
-		// "/teams/SHEEC_PORTAL1/occupational-medicine",
-		// "/teams/SHEEC_PORTAL1/psm",
-		// "/teams/SHEEC_PORTAL1/workplace-safety"
-		"/teams/SHEEC_PORTAL1/EHSChemSol",
-		"/teams/SHEEC_PORTAL1/EHSFluoro",
-		"/teams/SHEEC_PORTAL1/EHSTTech"
+		//Competencies
+		"/teams/SHEEC_PORTAL1/auditing/",
+		//"/teams/SHEEC_PORTAL1/data-systems-reporting",
+		"/teams/SHEEC_PORTAL1/distribution",
+		"/teams/SHEEC_PORTAL1/emergency-responses",
+		"/teams/SHEEC_PORTAL1/environmental-stewardship",
+		"/teams/SHEEC_PORTAL1/ergonomics",
+		"/teams/SHEEC_PORTAL1/fire-safety",
+		"/teams/SHEEC_PORTAL1/occupational-health",
+		"/teams/SHEEC_PORTAL1/occupational-medicine",
+		"/teams/SHEEC_PORTAL1/psm",
+		"/teams/SHEEC_PORTAL1/workplace-safety"
+
+		//Businesses
+		// "/teams/SHEEC_PORTAL1/EHSChemSol",
+		// "/teams/SHEEC_PORTAL1/EHSFluoro",
+		// "/teams/SHEEC_PORTAL1/EHSTTech"
 		
 		
 		]
@@ -211,9 +214,10 @@ var onload = function() {
 	
 };
 
-
+/* REMEMBER BOTH OF THESE */
 var webPartTitle = "Key Communications";
 var webPartIndex = 0;
+/**************************/
 
 // 
 // SP.SOD.registerSod("jquery", "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js");
