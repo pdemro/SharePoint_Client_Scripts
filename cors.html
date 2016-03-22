@@ -1,0 +1,95 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+
+	function requestToken() { 
+		// Change clientId and replyUrl to reflect your app's values 
+		// found on the Configure tab in the Azure Management Portal. 
+		// Also change {your_subdomain} to your subdomain for both endpointUrl and resource. 
+		var clientId    = '';
+		var replyUrl    = 'http://localhost:3000/'; 
+		var endpointUrl = 'https://demro.sharepoint.com/_api/lists';
+		var resource = "https://demro.sharepoint.com/"; 
+
+		var authServer  = 'https://login.windows.net/common/oauth2/authorize?';  
+		var responseType = 'token'; 
+
+		var url = authServer + 
+				"response_type=" + encodeURI(responseType) + "&" + 
+				"client_id=" + encodeURI(clientId) + "&" + 
+				"resource=" + encodeURI(resource) + "&" + 
+				"redirect_uri=" + encodeURI(replyUrl); 
+
+		window.location = url; 
+	}
+	
+	var urlParameterExtraction = new (function () { 
+	  function splitQueryString(queryStringFormattedString) { 
+		var split = queryStringFormattedString.split('&'); 
+
+		// If there are no parameters in URL, do nothing.
+		if (split == "") {
+		  return {};
+		} 
+
+		var results = {}; 
+
+		// If there are parameters in URL, extract key/value pairs. 
+		for (var i = 0; i < split.length; ++i) { 
+		  var p = split[i].split('=', 2); 
+		  if (p.length == 1) 
+			results[p[0]] = ""; 
+		  else 
+			results[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " ")); 
+		} 
+
+		return results; 
+	  } 
+
+	  // Split the query string (after removing preceding '#'). 
+	  this.queryStringParameters = splitQueryString(window.location.hash.substr(1)); 
+	})(); 
+
+	function getFilesFromO365() { 
+	  try 
+	  { 
+		var endpointUrl = 'https://demro.sharepoint.com/_api/lists'; 
+		var xhr = new XMLHttpRequest(); 
+		xhr.open("GET", endpointUrl); 
+
+		// The APIs require an OAuth access token in the Authorization header, formatted like this: 'Authorization: Bearer <token>'. 
+		xhr.setRequestHeader("Authorization", "Bearer " + token); 
+
+		// Process the response from the API.  
+		xhr.onload = function () { 
+		  if (xhr.status == 200) { 
+			var formattedResponse = JSON.stringify(JSON.parse(xhr.response), undefined, 2);
+			document.getElementById("results").textContent = formattedResponse; 
+		  } else { 
+			document.getElementById("results").textContent = "HTTP " + xhr.status + "<br>" + xhr.response; 
+		  } 
+		} 
+
+		// Make request.
+		xhr.send(); 
+	  } 
+	  catch (err) 
+	  {  
+		document.getElementById("results").textContent = "Exception: " + err.message; 
+	  } 
+	}
+	
+	
+	// Extract token from urlParameterExtraction object.
+	var token = urlParameterExtraction.queryStringParameters['access_token'];
+	
+	if(token != undefined){
+		getFilesFromO365();
+	}
+	else {
+		requestToken();
+	}
+	
+	
+</script>
+
+<div id="results"></div>
