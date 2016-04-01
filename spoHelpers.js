@@ -34,6 +34,7 @@ SP.SOD.executeFunc('sp.js', 'SP.ClientContext', onload);
  */
 function SpoHelpers() {
     
+    var _this = this;
     var _ctx = {};
     var _web = {};
     this.web = {}
@@ -52,7 +53,7 @@ function SpoHelpers() {
     init(this);
     
     this.initialize = function() {
-        init();
+        init(_this);
     };    
 
     
@@ -80,12 +81,14 @@ function SpoHelpers() {
         }, function(sender, args) {console.log("fail:"); console.log(args.get_message())});
     }
     
-    this.load = function(obj) {
+    this.load = function(obj, callback) {
+        var dfd = new jQuery.Deferred();
         _ctx.load(obj);
-        _ctx.executeQueryAsync(function() { console.log("loaded")}, function(sender, args) {console.log('Request failed. ' + args.get_message() + 
-        '\n' + args.get_stackTrace());})
+        _ctx.executeQueryAsync(function() { console.log("loaded"); dfd.resolve();}, function(sender, args) {console.log('Request failed. ' + args.get_message() + 
+        '\n' + args.get_stackTrace()); dfd.resolve();})
         
-        return;
+        
+        return dfd.promise();
     }
     
     // this.executeQuerySyncronous = function() {  
@@ -229,10 +232,13 @@ function SpoHelpers() {
             var yammerParent = "";
             
             if(pageElem.find("#div_840b70a6-63af-4e80-8c55-53a7a5b3a858").length > 0) {
+                console.log("project style");
                 yammerParent = pageElem.find("#div_840b70a6-63af-4e80-8c55-53a7a5b3a858").parent();
             } else if(pageElem.find("#div_5960e2d0-6996-41a8-a6d5-b2caa9c24e12").length > 0) {
+                console.log("client style")
                 yammerParent = pageElem.find("#div_5960e2d0-6996-41a8-a6d5-b2caa9c24e12").parent();
             } else {
+                console.log("new style");
                 yammerParent = pageElem.find("#yammerWidget");
             }
             
@@ -254,34 +260,48 @@ function SpoHelpers() {
         }
     }}
     
-    this.test = function(webPartTitle) {
-        webPartTitle = "Yammer Feed";
-        var page = spo.web.getFileByServerRelativeUrl(_spPageContextInfo.serverRequestPath);
+    this.replaceWebpartOnPage = function(webPartTitle, siteAbsoluteUrl, pageRelativeUrl) {
+        //webPartTitle = "Yammer Feed";
+        //var page = spo.web.getFileByServerRelativeUrl(_spPageContextInfo.serverRequestPath);
         //var page = spo.web.getFileByServerRelativeUrl("/sites/acctmgmt/DemroTest-DemroTestProjectII/SitePages/Home_copy(5).aspx");
-        var wpm = page.getLimitedWebPartManager(1);
-        spo.ctx.load(wpm);
         
+        var dfd = new jQuery.Deferred();
         
-        
-        console.log("Loading web part manager");
+        console.log("Loading new context");
+        this.ctx = new SP.ClientContext(siteAbsoluteUrl);
+        this.web = spo.ctx.get_web();
+        spo.ctx.load(this.web);
         spo.ctx.executeQueryAsync(function() {
-            console.log("Getting existing webpart");
-            getWebPartFromWebPartManager(wpm, webPartTitle).done(function(wpId) {
-                console.log("deleting existing webpart");
-                deleteWebPart(wpm, wpId).done(function() {
-                    console.log("adding new webpart to wpm");
-                    addWebPartToWebPartManager(wpm, wpXml).done(function(webPartAdded) {
-                        console.log("updating wiki page UI with new webpart");
-                        replaceWebPartWikiPage(wpm, page, webPartAdded.get_id()).done(function() {
-                        //replaceWebPartWikiPage(wpm, page, "12345").done(function() {
-                            console.log("Complete!");
-                        });    
+            
+            var page = spo.web.getFileByServerRelativeUrl(pageRelativeUrl);
+            var wpm = page.getLimitedWebPartManager(1);
+            spo.ctx.load(wpm);
+            
+            
+            
+            console.log("Loading web part manager");
+            spo.ctx.executeQueryAsync(function() {
+                console.log("Getting existing webpart");
+                getWebPartFromWebPartManager(wpm, webPartTitle).done(function(wpId) {
+                    console.log("deleting existing webpart");
+                    deleteWebPart(wpm, wpId).done(function() {
+                        console.log("adding new webpart to wpm");
+                        addWebPartToWebPartManager(wpm, wpXml).done(function(webPartAdded) {
+                            console.log("updating wiki page UI with new webpart");
+                            replaceWebPartWikiPage(wpm, page, webPartAdded.get_id()).done(function() {
+                            //replaceWebPartWikiPage(wpm, page, "12345").done(function() {
+                                console.log("Complete!");
+                                dfd.resolve();
+                            });    
+                        });
+                        
+                        
                     });
-                     
-                    
                 });
             });
         });
+        
+        return dfd.promise();
     }
     
     // this.addWebPart = function() {
