@@ -2,7 +2,7 @@ var SP = SP || {};
 
 var onload = function() { 
     
-    // First, checks if it isn't implemented yet.
+    // Add string.format to page
     if (!String.prototype.format) {
     String.prototype.format = function() {
         var args = arguments;
@@ -20,12 +20,11 @@ var onload = function() {
 	console.log("SharePoint Online Debug Window Helpers Loaded");
 };
 
-// SP.SOD.registerSod("jquery", "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js");
-// SP.SOD.executeFunc("jquery", null, onload);
-// SP.SOD.executeOrDelayUntilScriptLoaded(onload, "sp.js");
+SP.SOD.registerSod("jquery", "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js");
 
-SP.SOD.executeFunc('sp.js', 'SP.ClientContext', onload);
-
+SP.SOD.executeFunc("jquery", '$.attr', function() {
+    SP.SOD.executeFunc('sp.js', 'SP.ClientContext', onload);
+});
 
 
 
@@ -37,16 +36,21 @@ function SpoHelpers() {
     var _this = this;
     var _ctx = {};
     var _web = {};
-    this.web = {}
-    this.ctx = {}
+    var _site = {};
+    this.web = {};
+    this.site = {};
+    this.ctx = {};
+
     
     var init = function(obj) { 
         _ctx = SP.ClientContext.get_current();
         _web = _ctx.get_web();
+        _site = _ctx.get_site();
         _ctx.load(_web);
         _ctx.executeQueryAsync(function() { 
             obj.web = _web;
             obj.ctx = _ctx;
+            obj.site = _site;
             console.log("Initialized spoHelpers")
         }, function() {console.log("fail")});
     }
@@ -80,8 +84,65 @@ function SpoHelpers() {
             
         }, function(sender, args) {console.log("fail:"); console.log(args.get_message())});
     }
+
+    this.getCustomActionBySequence = function (ctxObj, sequence) {
+        var dfd = jQuery.Deferred();
+        var customActions = ctxObj.get_userCustomActions();
+
+        this.load(customActions).done(function() {
+            var customAction = null;
+            var data = customActions.get_data();
+            for(var i = 0; i < customActions.get_count(); i++) { 
+                var action = data[i];
+
+                if(action.get_sequence() == sequence) {
+                    customAction = action;
+                }                                
+            }
+            dfd.resolve(customAction);
+        });
+
+        return dfd.promise();
+    }
+
+    this.deleteCustomActionBySequence = function(ctxObj, sequence) {
+        var dfd = jQuery.Deferred();
+        
+        this.getCustomActionBySequence(ctxObj, sequence).done(function(customAction) {
+            
+            if(customAction) {
+                customAction.deleteObject();
+                _ctx.load(customAction);
+                _ctx.executeQueryAsync(function() {
+                    console.log("deleted custom action");
+                })
+            } else {
+                console.log("CustomAction with sequence {0} does not exist".format(sequence));
+            }
+
+            dfd.resolve();
+        })
+
+        return dfd.promise();
+    }
+
+    this.addCustomActionScriptBlock = function(ctxObj, title, sequence, scriptBlock) {
+
+        this.deleteCustomActionBySequence(ctxObj, sequence).done(function(customAction) {
+            var customActions = ctxObj.get_userCustomActions();
+            customAction = customActions.add();
+            
+            customAction.set_location("ScriptLink");
+            customAction.set_scriptBlock(scriptBlock);
+            customAction.set_title(title);
+            customAction.set_sequence(sequence);
+
+            customAction.update();
+            _ctx.executeQueryAsync();
+        });
+    }
     
-    this.load = function(obj, callback) {
+    this.load = function(obj) {
         var dfd = new jQuery.Deferred();
         _ctx.load(obj);
         _ctx.executeQueryAsync(function() { console.log("loaded"); dfd.resolve();}, function(sender, args) {console.log('Request failed. ' + args.get_message() + 
@@ -90,23 +151,6 @@ function SpoHelpers() {
         
         return dfd.promise();
     }
-    
-    // this.executeQuerySyncronous = function() {  
-    //     var dfd = new jQuery.Deferred();
-        
-    //     _ctx.executeQueryAsync(function() { console.log("complete"); dfd.resolve()}, function(sender, args) {console.log('Request failed. ' + args.get_message() + 
-    //     '\n' + args.get_stackTrace()); dfd.resolve();})
-        
-    //     var count = 0;
-    //     while(dfd.state() == "pending") {
-    //         if(count > 10) {
-    //             break;
-    //         }
-    //         setTimeout(function() {console.log("processing..")}, 500);
-    //     }
-        
-    //     return; 
-    // }
     
     var deleteWebPart = function (wpm, id) {
         var dfd = jQuery.Deferred();
