@@ -43,6 +43,7 @@ function SpoHelpers() {
 
     
     var init = function(obj) { 
+        var dfd = new jQuery.Deferred();
         _ctx = SP.ClientContext.get_current();
         _web = _ctx.get_web();
         _site = _ctx.get_site();
@@ -52,12 +53,19 @@ function SpoHelpers() {
             obj.ctx = _ctx;
             obj.site = _site;
             console.log("Initialized spoHelpers")
-        }, function() {console.log("fail")});
+            dfd.resolve();
+        }, function() 
+            {
+                console.log("fail")
+                dfd.resolve();
+            }
+        );
+        return dfd.promise();
     }
     init(this);
     
     this.initialize = function() {
-        init(_this);
+        return init(_this);
     };    
 
     
