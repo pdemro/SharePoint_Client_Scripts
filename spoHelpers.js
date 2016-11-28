@@ -74,7 +74,7 @@ function SpoHelpers() {
     /** File Publishing **/
     function publishFile(file) {
         // var postUrl = `${serverUrl}/_api/web/GetFileByServerRelativeUrl('${file.d.ServerRelativeUrl}')/checkin(comment='Check-in comment for the publish operation.',checkintype=0)`;
-         var postUrl = _spPageContextInfo.webAbsoluteUrl + "/_api/web/GetFileByServerRelativeUrl('" + file.d.ServerRelativeUrl + "')/publish(comment='Check-in comment for the publish operation.')";
+         var postUrl = _spPageContextInfo.webAbsoluteUrl + "/_api/web/GetFileByServerRelativeUrl('" + file.get_serverRelativeUrl() + "')/publish(comment='Check-in comment for the publish operation.')";
          var dfd = jQuery.Deferred();
 
         jQuery.ajax({
@@ -96,7 +96,7 @@ function SpoHelpers() {
 
     function checkInFile(file) {
         // var postUrl = `${serverUrl}/_api/web/GetFileByServerRelativeUrl('${file.d.ServerRelativeUrl}')/checkin(comment='Check-in comment for the publish operation.',checkintype=0)`;
-         var postUrl = _spPageContextInfo.webAbsoluteUrl + "/_api/web/GetFileByServerRelativeUrl('" + file.d.ServerRelativeUrl + "')/checkin(comment='Check-in comment for the publish operation.', checkintype=0)";
+         var postUrl = _spPageContextInfo.webAbsoluteUrl + "/_api/web/GetFileByServerRelativeUrl('" + file.get_serverRelativeUrl() + "')/checkin(comment='Check-in comment for the publish operation.', checkintype=0)";
 
          var dfd = jQuery.Deferred();
 
@@ -118,24 +118,28 @@ function SpoHelpers() {
     }
 
     function recursivePublishFiles(folder) {
-        console.log(folder.get_name());
+        //console.log(folder.get_name());
         var subFolders = folder.get_folders();
-        this.load(subFolders).done(function() {
+        spo.load(subFolders).done(function() {
             if(subFolders.get_count() > 0) {
                 subFolders.get_data().forEach(function(v, i) {
-                    console.log("subfolder: " + v.get_name()); 
-                    //recursivePublishFiles(v);
+                    //console.log("subfolder: " + v.get_name()); 
+                    recursivePublishFiles(v);
                 })
             }
         });
 
         var files = folder.get_files();
-        this.load(files).done(function() {
+        spo.load(files).done(function() {
             files.get_data().forEach(function(v, i) {
-                console.log("file: " + v.get_name());
-                // checkInFile(v).done(function(checkedInFile) {
-                //     publishFile(checkedInFile);
-                // })
+                //console.log("file: " + v.get_name());
+                if(v.get_minorVersion() > 0) {
+                    console.log("file: " + v.get_name());
+                    checkInFile(v).done(function(checkedInFile) {
+                        publishFile(v);
+                    })
+                }
+                
             });
         });
     }
