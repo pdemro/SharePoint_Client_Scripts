@@ -30,6 +30,8 @@ SP.SOD.executeFunc("jquery", '$.attr', function() {
 
 /* Spo Helpers
  * This class is a collection of static methods to help QoL when prototyping in O365 through the debug window
+ * TODO:  Break this out into multiple helper classes based on functionality
+ * TODO: Convert me to typescript
  */
 function SpoHelpers() {
     
@@ -41,7 +43,7 @@ function SpoHelpers() {
     this.site = {};
     this.ctx = {};
 
-    
+    /** Constructor **/
     var init = function(obj) { 
         var dfd = new jQuery.Deferred();
         _ctx = SP.ClientContext.get_current();
@@ -67,8 +69,88 @@ function SpoHelpers() {
     this.initialize = function() {
         return init(_this);
     };    
-
     
+
+    /** File Publishing **/
+    function publishFile(file) {
+        // var postUrl = `${serverUrl}/_api/web/GetFileByServerRelativeUrl('${file.d.ServerRelativeUrl}')/checkin(comment='Check-in comment for the publish operation.',checkintype=0)`;
+         var postUrl = _spPageContextInfo.webAbsoluteUrl + "/_api/web/GetFileByServerRelativeUrl('" + file.d.ServerRelativeUrl + "')/publish(comment='Check-in comment for the publish operation.')";
+         var dfd = jQuery.Deferred();
+
+        jQuery.ajax({
+            url: postUrl,
+            type: "POST",
+            headers: {
+                "X-RequestDigest": jQuery("#__REQUESTDIGEST").val(),
+                "content-type": "application/json;odata=verbose",
+                //"content-length": body.length,
+                //"IF-MATCH": itemMetadata.etag,
+                "X-HTTP-Method": "MERGE"
+            }
+        }).always(function() {
+            dfd.resolve();
+        });
+
+        return dfd.promise();
+    }
+
+    function checkInFile(file) {
+        // var postUrl = `${serverUrl}/_api/web/GetFileByServerRelativeUrl('${file.d.ServerRelativeUrl}')/checkin(comment='Check-in comment for the publish operation.',checkintype=0)`;
+         var postUrl = _spPageContextInfo.webAbsoluteUrl + "/_api/web/GetFileByServerRelativeUrl('" + file.d.ServerRelativeUrl + "')/checkin(comment='Check-in comment for the publish operation.', checkintype=0)";
+
+         var dfd = jQuery.Deferred();
+
+        jQuery.ajax({
+            url: postUrl,
+            type: "POST",
+            headers: {
+                "X-RequestDigest": jQuery("#__REQUESTDIGEST").val(),
+                "content-type": "application/json;odata=verbose",
+                //"content-length": body.length,
+                //"IF-MATCH": itemMetadata.etag,
+                "X-HTTP-Method": "MERGE"
+            }
+        }).always(function() {
+            dfd.resolve(file);
+        });
+
+        return dfd.promise();
+    }
+
+    function recursivePublishFiles(folder) {
+        console.log(folder.get_name());
+        var subFolders = folder.get_folders();
+        this.load(subFolders).done(function() {
+            if(subFolders.get_count() > 0) {
+                subFolders.get_data().forEach(function(v, i) {
+                    console.log("subfolder: " + v.get_name()); 
+                    //recursivePublishFiles(v);
+                })
+            }
+        });
+
+        var files = folder.get_files();
+        this.load(files).done(function() {
+            files.get_data().forEach(function(v, i) {
+                console.log("file: " + v.get_name());
+                // checkInFile(v).done(function(checkedInFile) {
+                //     publishFile(checkedInFile);
+                // })
+            });
+        });
+    }
+
+    this.publishAllFiles = function(folderUrl) {
+        var folder = spo.web.getFolderByServerRelativeUrl(folderUrl);
+
+        this.load(folder).done(function() {
+            recursivePublishFiles(folder);
+        })
+    }
+
+
+    /** General Tools **/
+
     this.setMasterPage = function(masterPageUrl) {        
         _web.set_masterUrl(masterPageUrl);
         _web.update();
