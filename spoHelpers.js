@@ -236,6 +236,23 @@ function SpoHelpers() {
         });
     }
     
+    this.addCustomActionSpFx = function(ctxObj, location, title, sequence, componentId, propertiesJson) {
+
+        this.deleteCustomActionBySequence(ctxObj, sequence).done(function(customAction) {
+            var customActions = ctxObj.get_userCustomActions();
+            customAction = customActions.add();
+            
+            customAction.set_location(location);
+            customAction.set_title("Global Nav");
+            customAction.set_sequence(sequence);
+	    customAction.set_clientSideComponentId(componentId);
+	    customAction.set_clientSideComponentProperties(propertiesJson);
+
+            customAction.update();
+            _ctx.executeQueryAsync();
+        });
+    }
+    
     this.load = function(obj) {
         var dfd = new jQuery.Deferred();
         _ctx.load(obj);
