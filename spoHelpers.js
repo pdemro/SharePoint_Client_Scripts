@@ -243,7 +243,7 @@ function SpoHelpers() {
             customAction = customActions.add();
             
             customAction.set_location(location);
-            customAction.set_title("Global Nav");
+            customAction.set_title(title);
             customAction.set_sequence(sequence);
 	    customAction.set_clientSideComponentId(componentId);
 	    customAction.set_clientSideComponentProperties(propertiesJson);
