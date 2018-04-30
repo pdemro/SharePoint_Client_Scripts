@@ -179,6 +179,28 @@ function SpoHelpers() {
         }, function(sender, args) {console.log("fail:"); console.log(args.get_message())});
     }
 
+    this.getCustomActions = function (ctxObj) {
+        var dfd = jQuery.Deferred();
+        var customActions = ctxObj.get_userCustomActions();
+
+        this.load(customActions).done(function() {
+
+            var customActionEnumerator = customActions.getEnumerator();
+
+            while (customActionEnumerator.moveNext()) 
+            {
+                var oUserCustomAction = customActionEnumerator.get_current();
+                
+                console.log("Custom Action Title: " + oUserCustomAction.get_title() + ", Sequence: " + oUserCustomAction.get_sequence());
+	    }
+
+            console.log('Not seeing any custom actions?  Try checking the site vs. web (or vise versa)');
+
+            dfd.resolve();
+        })
+        return dfd.promise();
+    }
+    
     this.getCustomActionBySequence = function (ctxObj, sequence) {
         var dfd = jQuery.Deferred();
         var customActions = ctxObj.get_userCustomActions();
