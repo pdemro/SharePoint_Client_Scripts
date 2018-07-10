@@ -182,21 +182,24 @@ function SpoHelpers() {
     this.getCustomActions = function (ctxObj) {
         var dfd = jQuery.Deferred();
         var customActions = ctxObj.get_userCustomActions();
-
+	var customActionsArray = [];
+	    
         this.load(customActions).done(function() {
 
             var customActionEnumerator = customActions.getEnumerator();
 
             while (customActionEnumerator.moveNext()) 
             {
+		
                 var oUserCustomAction = customActionEnumerator.get_current();
-                
+                customActionsArray.push(oUserCustomAction);
+		    
                 console.log("Custom Action Title: " + oUserCustomAction.get_title() + ", Sequence: " + oUserCustomAction.get_sequence());
 	    }
 
             console.log('Not seeing any custom actions?  Try checking the site vs. web (or vise versa)');
 
-            dfd.resolve();
+            dfd.resolve(customActionsArray);
         })
         return dfd.promise();
     }
