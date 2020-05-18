@@ -260,6 +260,22 @@ function SpoHelpers() {
             _ctx.executeQueryAsync();
         });
     }
+	
+    this.addCustomActionScriptSource = function(ctxObj, title, sequence, scriptUrl) {
+
+        this.deleteCustomActionBySequence(ctxObj, sequence).done(function(customAction) {
+            var customActions = ctxObj.get_userCustomActions();
+            customAction = customActions.add();
+            
+            customAction.set_location("ScriptLink");
+            customAction.set_scriptSrc(scriptUrl);
+            customAction.set_title(title);
+            customAction.set_sequence(sequence);
+
+            customAction.update();
+            _ctx.executeQueryAsync();
+        });
+    }
     
     this.addCustomActionSpFx = function(ctxObj, location, title, sequence, componentId, propertiesJson) {
 
